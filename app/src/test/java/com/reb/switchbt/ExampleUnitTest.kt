@@ -1,8 +1,11 @@
 package com.reb.switchbt
 
+import com.reb.switchbt.profile.BTCMD
+import com.reb.switchbt.util.HexStringConver
 import org.junit.Test
 
 import org.junit.Assert.*
+import java.util.*
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -12,6 +15,7 @@ import org.junit.Assert.*
 class ExampleUnitTest {
     @Test
     fun addition_isCorrect() {
-        assertEquals(4, 2 + 2)
+        val i = (0xA1) xor (0x04)
+        System.out.println("===" + HexStringConver.bytes2HexStr(BTCMD.queryCmd(1234)))
     }
 }

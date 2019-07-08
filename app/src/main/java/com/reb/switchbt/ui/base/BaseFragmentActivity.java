@@ -21,14 +21,6 @@ import com.reb.switchbt.R;
 public class BaseFragmentActivity extends BaseActivity {
 
     protected Fragment mCurrentFrag;
-//
-//    @Override
-//    protected void onSaveInstanceState(Bundle outState) {
-//        super.onSaveInstanceState(outState);
-//        if (mCurrentFrag != null) {
-//            outState.putString("mCurrentFragTag", mCurrentFrag.getClass().getSimpleName());
-//        }
-//    }
 
     protected void changeFragment(Fragment target) {
         if (target != null) {

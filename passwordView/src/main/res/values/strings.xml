@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">passlibrary</string>
+    <string name="password_setting">Password Setting</string>
+    <string name="password_rule_alert">Please set a 4-digit password \n for the device</string>
+</resources>

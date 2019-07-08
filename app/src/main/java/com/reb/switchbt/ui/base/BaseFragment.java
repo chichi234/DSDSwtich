@@ -24,7 +24,11 @@ public abstract class BaseFragment extends Fragment {
             if (parent != null) {
                 ((ViewGroup) parent).removeView(mRootView);
             }
+        } else {
+            mRootView = inflater.inflate(getLayoutId(), null);
         }
         return mRootView;
     }
+
+    protected abstract int getLayoutId();
 }

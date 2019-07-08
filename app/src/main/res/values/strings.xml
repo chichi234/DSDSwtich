@@ -105,5 +105,18 @@
     <string name="available_devices">Available Devices</string>
     <string name="pair">Pair</string>
     <string name="wait_moment">Please wait a moment!</string>
+    <string name="rename">Rename</string>
+    <string name="remove_sure_alert">Remove this device?</string>
+    <string name="password">Password</string>
+    <string name="remove">Remove</string>
+    <string name="password_setting">Password Setting</string>
+    <string name="off">OFF</string>
+    <string name="on">ON</string>
+    <string name="operation_failed">Operation failed</string>
+    <string name="cur_password">Current password\n%s</string>
+    <string name="reset">Reset</string>
+    <string name="refreshing">Refreshing</string>
+    <string name="Wrong_Password">Wrong Password!</string>
+    <string name="add_my_devices">Add To My Devices</string>
 
 </resources>

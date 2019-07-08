@@ -1,9 +1,10 @@
 package com.reb.switchbt.ui.base;
 
 import android.support.v4.app.FragmentActivity;
-import com.reb.switchbt.R;
+
 import com.reb.switchbt.ui.util.CustomDialog;
 import com.reb.switchbt.util.DebugLog;
+import com.reb.switchbt.R;
 
 
 /**
@@ -16,7 +17,7 @@ import com.reb.switchbt.util.DebugLog;
  * @history At 2018-1-11 17:33 created by Reb
  */
 
-public class BaseActivity extends FragmentActivity {
+public abstract class BaseActivity extends FragmentActivity {
 
     public CustomDialog customLoadingDialog;
 
@@ -30,6 +31,8 @@ public class BaseActivity extends FragmentActivity {
             } else {
                 customLoadingDialog = new CustomDialog(this, R.layout.dialog_layout, R.style.DialogTheme, getResources().getString(titleId));
             }
+            customLoadingDialog.setCancelable(false);
+            customLoadingDialog.setCanceledOnTouchOutside(false);
             customLoadingDialog.show();
         } catch (Exception e) {
             DebugLog.e(e.getMessage());

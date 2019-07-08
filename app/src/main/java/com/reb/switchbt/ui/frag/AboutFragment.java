@@ -15,12 +15,8 @@ import com.reb.switchbt.ui.base.BaseFragment;
 
 public class AboutFragment extends BaseFragment {
 
-//    @Override
-//    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-//        super.onCreateView(inflater, container, savedInstanceState);
-//        if (mRootView == null) {
-//            mRootView = inflater.inflate(R.layout.frag_about, null);
-//        }
-//        return mRootView;
-//    }
+    @Override
+    protected int getLayoutId() {
+        return R.layout.frag_about;
+    }
 }

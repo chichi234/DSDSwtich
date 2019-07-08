@@ -58,7 +58,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/title_padding"
         android:layout_marginStart="@dimen/title_padding"
-        android:descendantFocusability="afterDescendants"
+        android:descendantFocusability="blocksDescendants"
         android:cacheColorHint="@android:color/transparent"/>
 
     <TextView
