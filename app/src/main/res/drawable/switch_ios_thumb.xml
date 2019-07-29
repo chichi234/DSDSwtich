@@ -6,6 +6,6 @@
         android:width="3dp"
         android:color="#00000000" />
     <size
-        android:width="20dp"
-        android:height="20dp" />
+        android:width="@dimen/switch_thumb_height"
+        android:height="@dimen/switch_thumb_height" />
 </shape>

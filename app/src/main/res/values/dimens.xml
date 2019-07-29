@@ -10,5 +10,9 @@
     <dimen name="relay_margin1">60dp</dimen>
     <dimen name="relay_margin_ver">10dp</dimen>
 
+    <dimen name="switch_track_height">20dp</dimen>
+    <dimen name="switch_track_radius">10dp</dimen>
+    <dimen name="switch_thumb_height">20dp</dimen>
+
     <dimen name="text_size_18">18sp</dimen>
 </resources>

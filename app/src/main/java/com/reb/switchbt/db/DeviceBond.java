@@ -39,29 +39,37 @@ public class DeviceBond {
     @Transient
     public boolean isConnectting = false;
     @Transient
-    private String msg = "OffLine";
+    public boolean isWrong = false;
     @Transient
-    public boolean[] relayState = new boolean[3];
+    private String msg = "";
     @Transient
-    public boolean[] relayTempState = new boolean[3];
+    public boolean[] relayState = new boolean[4];
+    @Transient
+    public boolean[] relayTempState = new boolean[4];
     @Transient
     public BleDevice device;
     @Transient
     public String tempPsw = psw;
     @Transient
-    public Integer relayCount = 3;
+    public Integer relayCount = 1;
 
     public String getMsg() {
-        if (isOnline) {
-            if (isConnected) {
-                msg = "";
-            } else {
-               msg = "";
-            }
+//        if (isOnline) {
+////            if (isConnected) {
+////                msg = "";
+////            } else {
+////               msg = "";
+////            }
+//            return msg;
+//        } else {
+//            return "OffLine";
+//        }
+
+        if (isConnected) {
+            return msg;
         } else {
-            msg = "OffLine";
+            return "OffLine";
         }
-        return msg;
     }
 
     public void setMsg(String msg) {

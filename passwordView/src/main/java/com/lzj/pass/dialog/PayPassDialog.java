@@ -56,7 +56,6 @@ public class PayPassDialog {
      */
     public PayPassView getPayViewPass() {
         return  mDialogLayout.findViewById(R.id.pay_View);
-
     }
 
     /**

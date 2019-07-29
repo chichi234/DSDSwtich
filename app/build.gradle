@@ -15,6 +15,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        vectorDrawables.useSupportLibrary = true
     }
     signingConfigs {
         release {
@@ -63,4 +64,5 @@ dependencies {
     implementation project(':FastBleLib')
     implementation project(':passwordView')
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
+
 }

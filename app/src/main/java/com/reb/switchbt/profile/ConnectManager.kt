@@ -63,11 +63,11 @@ class ConnectManager(val adapter: MyDeviceAdapter, val scanController: ScanContr
         Observable.fromIterable(adapter.data.asIterable())
                 .observeOn(scheduler)
                 .map {
-                    if (devies.size >= BleManager.getInstance().maxConnectCount) {
-                        synchronized(lock) {
-                            lock.wait()
-                        }
-                    }
+//                    if (devies.size >= BleManager.getInstance().maxConnectCount) {
+//                        synchronized(lock) {
+//                            lock.wait()
+//                        }
+//                    }
                     devies.add(it)
                     it
                 }
@@ -88,7 +88,7 @@ class ConnectManager(val adapter: MyDeviceAdapter, val scanController: ScanContr
     }
 
     fun connect(bondDevice: DeviceBond) {
-        if (BleManager.getInstance().isBlueEnable) {
+        if (BleManager.getInstance().isBlueEnable && !BleManager.getInstance().isConnected(bondDevice.device)) {
             BleManager.getInstance().connect(bondDevice.device, object : BleGattCallback() {
                 override fun onStartConnect() {
                     bondDevice.isConnectting = true
@@ -133,6 +133,7 @@ class ConnectManager(val adapter: MyDeviceAdapter, val scanController: ScanContr
                     }
 
                     override fun onNotifyFailure(exception: BleException?) {
+                        DebugLog.e("onNotifyFailure:" + exception.toString())
                         BleManager.getInstance().disconnect(deviceBond.device)
                         resetState(deviceBond)
                     }
@@ -149,6 +150,8 @@ class ConnectManager(val adapter: MyDeviceAdapter, val scanController: ScanContr
 
     fun write(deviceBond: DeviceBond, data: ByteArray) {
         DebugLog.i("write:${HexStringConver.bytes2HexStr(data)}")
+        deviceBond.isWrong = false
+        deviceBond.msg = ""
         BleManager.getInstance().write(
                 deviceBond.device,
                 DeviceConfig.serviceUUID,

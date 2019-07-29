@@ -189,7 +189,7 @@ public class PayPassView extends RelativeLayout {
                             }
                             else {
                                 strPass=strPass+listNumber.get(position);//得到当前数字并累加
-                                mTvPass[strPass.length()-1].setText("*"); //设置界面*
+                                mTvPass[strPass.length()-1].setText(listNumber.get(position) + ""); //设置界面*
                                 //输入完成
                                 if(strPass.length()==4){
 //                                mPayClickListener.onPassFinish(strPass);//请求服务器验证密码
@@ -284,5 +284,16 @@ public class PayPassView extends RelativeLayout {
         for(int i=0;i<4;i++){
             mTvPass[i].setText("");
         }
+    }
+
+    public void setPass(String pass) {
+        strPass = pass;
+        for(int i=0;i<4;i++){
+            mTvPass[i].setText(strPass.substring(i,i+1));
+        }
+    }
+
+    public String getStrPass() {
+        return strPass;
     }
 }

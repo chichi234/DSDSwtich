@@ -1,6 +1,7 @@
 package com.reb.switchbt.ui.act
 
 import android.os.Bundle
+import android.os.Process
 import com.clj.fastble.BleManager
 import com.reb.switchbt.R
 import com.reb.switchbt.ui.base.BaseFragmentActivity
@@ -44,6 +45,6 @@ class MainActivity : BaseFragmentActivity() {
         super.onDestroy()
         DebugLog.i("onDestroy")
         BleManager.getInstance().disconnectAllDevice()
-
+        android.os.Process.killProcess(Process.myPid())
     }
 }

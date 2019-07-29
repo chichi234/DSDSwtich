@@ -50,7 +50,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:padding="@dimen/title_padding"
-        android:text="There is no my device. \nplease pair and add to my device"/>
+        android:text="@string/no_device"/>
 
     <ListView
         android:id="@+id/my_devices"
@@ -58,6 +58,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/title_padding"
         android:layout_marginStart="@dimen/title_padding"
+        android:fadeScrollbars ="false"
         android:descendantFocusability="blocksDescendants"
         android:cacheColorHint="@android:color/transparent"/>
 
@@ -78,6 +79,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/title_padding"
         android:layout_marginStart="@dimen/title_padding"
+        android:fadeScrollbars ="false"
         android:descendantFocusability="afterDescendants"
         android:cacheColorHint="@android:color/transparent"/>
 

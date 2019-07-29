@@ -56,56 +56,56 @@
         android:gravity="center"
         android:orientation="horizontal">
         <!--======1======-->
-        <TextView
+        <EditText
             android:id="@+id/tv_pass1"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:inputType="numberPassword"
             android:background="@drawable/payview_stroke_gray_shape"
             android:gravity="center"
-            android:paddingBottom="5dp"
             android:layout_gravity="center"
+            android:cursorVisible="false"
+            android:focusable="false"
             android:textColor="@color/black"
             android:textSize="@dimen/sp_42" />
 
         <!--=====2=====-->
-        <TextView
+        <EditText
             android:id="@+id/tv_pass2"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:inputType="numberPassword"
             android:background="@drawable/payview_stroke_gray_shape"
             android:gravity="center"
-            android:paddingBottom="5dp"
             android:layout_gravity="center"
+            android:cursorVisible="false"
+            android:focusable="false"
             android:textColor="@color/black"
             android:textSize="@dimen/sp_42" />
 
 
         <!--=====3=====-->
-        <TextView
+        <EditText
             android:id="@+id/tv_pass3"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:inputType="numberPassword"
             android:background="@drawable/payview_stroke_gray_shape"
-            android:paddingBottom="5dp"
             android:layout_gravity="center"
             android:textColor="@color/black"
             android:textSize="@dimen/sp_42"
+            android:cursorVisible="false"
+            android:focusable="false"
             android:gravity="center"/>
 
         <!--=====4=======-->
-        <TextView
+        <EditText
             android:id="@+id/tv_pass4"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:inputType="numberPassword"
-            android:paddingBottom="5dp"
             android:layout_gravity="center"
             android:background="@drawable/payview_stroke_gray_shape"
             android:textColor="@color/black"
             android:textSize="@dimen/sp_42"
+            android:cursorVisible="false"
+            android:focusable="false"
             android:gravity="center"/>
 
     </LinearLayout>

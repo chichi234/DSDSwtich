@@ -51,32 +51,31 @@ class DataParser {
         if (data.size >= 5) {
             when (data[1]) {
                 0x01.toByte(),0x02.toByte() -> when(data[2]){
+                    0x00.toByte() -> showWrongPassword(deviceBond, context, adapter)
                     0x01.toByte() -> {
-                        for (i in 0..2) {
+                        for (i in 0..3) {
                             deviceBond.relayState[i] = deviceBond.relayTempState[i]
                         }
                         adapter.notifyDataSetChanged()
                     }
-                    0x00.toByte() -> {
-                        showWrongPassword(deviceBond, context, adapter)
-                    }
                 }// 开关继电器
-                0x05.toByte() -> {
-                    val channels = data[2].toInt() and (0xFF)
-                    deviceBond.relayCount = channels
-                    for (i in 1..channels) {
-                        deviceBond.relayState[i-1] = data[3 + channels - i] == 0x01.toByte()
+                0x05.toByte() -> when(data[2]){
+                    0x00.toByte() -> showWrongPassword(deviceBond, context, adapter)
+                    else -> {
+                        val channels = data[2].toInt() and (0xFF)
+                        deviceBond.relayCount = channels
+                        for (i in 1..channels) {
+                            deviceBond.relayState[i-1] = data[3 + channels - i] == 0x01.toByte()
+                        }
+                        connectManager.resetState(deviceBond)
+                        adapter.notifyDataSetChanged()
                     }
-                    connectManager.resetState(deviceBond)
-                    adapter.notifyDataSetChanged()
                 }// 查询继电器状态
                 0x11.toByte() -> when(data[2]){
+                    0x00.toByte() -> showWrongPassword(deviceBond, context, adapter)
                     0x01.toByte() -> {
                         deviceBond.psw = deviceBond.tempPsw
                         DBManager.getInstance().deviceBondDao.update(deviceBond)
-                    }
-                    0x00.toByte() -> {
-                        showWrongPassword(deviceBond, context, adapter)
                     }
                 }// 设置密码
             }
@@ -85,7 +84,8 @@ class DataParser {
 
     private fun showWrongPassword(deviceBond: DeviceBond, context: Context, adapter: MyDeviceAdapter) {
         deviceBond.msg = context.getString(R.string.Wrong_Password)
-        BleManager.getInstance().disconnect(deviceBond.device)
+        deviceBond.isWrong = true
+//        BleManager.getInstance().disconnect(deviceBond.device)
         adapter.notifyDataSetChanged()
     }
 

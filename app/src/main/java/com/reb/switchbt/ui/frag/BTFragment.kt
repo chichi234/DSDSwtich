@@ -15,10 +15,7 @@ import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.*
-import android.widget.AdapterView
-import android.widget.PopupWindow
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import com.clj.fastble.BleManager
 import com.clj.fastble.callback.BleScanCallback
 import com.clj.fastble.data.BleDevice
@@ -28,8 +25,8 @@ import com.lzj.pass.dialog.PayPassDialog
 import com.lzj.pass.dialog.PayPassView
 import com.reb.switchbt.db.DBManager
 import com.reb.switchbt.db.DeviceBond
-import com.reb.switchbt.R
 import com.reb.switchbt.profile.BTCMD
+import com.reb.switchbt.R
 import com.reb.switchbt.profile.ConnectManager
 import com.reb.switchbt.ui.adapter.DeviceAdapter
 import com.reb.switchbt.ui.adapter.MyDeviceAdapter
@@ -37,7 +34,6 @@ import com.reb.switchbt.ui.base.BaseActivity
 import com.reb.switchbt.ui.base.BaseFragment
 import com.reb.switchbt.ui.util.ScanController
 import com.reb.switchbt.util.DebugLog
-import kotlinx.android.synthetic.main.dialog_rename.*
 import kotlinx.android.synthetic.main.frag_devices.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -101,17 +97,20 @@ class BTFragment : BaseFragment() {
             connectManager.connect(it)
             noDevice.visibility = View.GONE
         }
-        myAdapter.setConnectDeviceListener(object : MyDeviceAdapter.ConnectDeviceListener{
+        myAdapter.setConnectDeviceListener(object : MyDeviceAdapter.ConnectDeviceListener {
             override fun connectDevice(device: DeviceBond, isChecked: Boolean) {
-                DebugLog.i("isChecked:$isChecked")
-                if (!isChecked) {
-                    BleManager.getInstance().disconnect(device.device)
-                } else {
-                    connectManager.connect(device)
-                }
+//                DebugLog.i("isChecked:$isChecked")
+//                if (!isChecked) {
+//                    BleManager.getInstance().disconnect(device.device)
+//                } else {
+//                    connectManager.connect(device)
+//                }
             }
 
             override fun switchRelay(device: DeviceBond, index: Int, isChecked: Boolean) {
+                for (i in 0..3) {
+                    device.relayTempState[i] = device.relayState[i]
+                }
                 device.relayTempState[index - 1] = isChecked
                 connectManager.write(device, BTCMD.controlSingleRelay(device.psw.toInt(), index, isChecked))
             }
@@ -129,8 +128,8 @@ class BTFragment : BaseFragment() {
         activity!!.unregisterReceiver(btStateReceiver)
     }
 
-    private var itemHeight:Int?=0
-    private var itemExpendHeight:Int?=0
+    private var itemHeight: Int? = 0
+    private var itemExpendHeight: Int? = 0
     private fun changeMyDeviceHeight() {
         if (myAdapter.count == 0) {
             val lp = my_devices.layoutParams
@@ -138,50 +137,66 @@ class BTFragment : BaseFragment() {
             my_devices.layoutParams = lp
             return
         }
-        if (myAdapter.count <= 3) {
-            my_devices.post {
+        my_devices.post {
+            if (myAdapter.count <= 3) {
+
                 val lp = my_devices.layoutParams
-                val child = my_devices.getChildAt(0)
-                val height = child?.measuredHeight
-                if (itemHeight!! > height!! || itemHeight!! ==0) {
-                    itemHeight = height
+                if (itemHeight == null || itemHeight == 0) {
+                    for (i in 0 until myAdapter.count) {
+                        val child = my_devices.getChildAt(i)
+                        val height = child?.measuredHeight
+                        if (height != null) {
+                            if (itemHeight!! > height || itemHeight!! == 0) {
+                                itemHeight = height
+                            }
+                            if (itemHeight!! < height) {
+                                itemExpendHeight = height
+                            }
+                        }
+                    }
                 }
-                if (itemHeight!! < height) {
-                    itemExpendHeight = height
+                if (myAdapter.hasSelect() && itemExpendHeight == 0) {
+                    for (i in 0 until myAdapter.count) {
+                        val child = my_devices.getChildAt(i)
+                        val height = child?.measuredHeight
+                        if (height != null && itemHeight!! < height) {
+                            itemExpendHeight = height
+                        }
+                    }
                 }
-                DebugLog.i("height:$height,itemHeight:$itemHeight,itemExpendHeight$itemExpendHeight")
+                DebugLog.i("itemHeight:$itemHeight,itemExpendHeight$itemExpendHeight")
                 lp.height = itemHeight!! * myAdapter.count
                 if (myAdapter.hasSelect()) {
                     lp.height += (itemExpendHeight!! - itemHeight!!)
                 }
                 my_devices.layoutParams = lp
-            }
-        } else {
-            val lp = my_devices.layoutParams
-            var child = my_devices.getChildAt(0)
-            if (child == null) {
-                my_devices.post {
-                    child = my_devices.getChildAt(my_devices.childCount - 1)
-                    val height = child?.measuredHeight
-                    if (itemHeight!! > height!! || itemHeight!! ==0) {
-                        itemHeight = height
-                    }
-                    if (itemHeight!! < height) {
-                        itemExpendHeight = height
-                    }
-                    DebugLog.i("height:$height,itemHeight:$itemHeight,itemExpendHeight$itemExpendHeight")
-                    lp.height = itemHeight!! * Math.min(myAdapter.count, 3)
-                    my_devices.layoutParams = lp
-                }
+
             } else {
-                val height = child.measuredHeight
-                if (itemHeight!! > height || itemHeight!! ==0) {
-                    itemHeight = height
+                val lp = my_devices.layoutParams
+                if (itemHeight == null || itemHeight == 0) {
+                    for (i in 0 until myAdapter.count) {
+                        val child = my_devices.getChildAt(i)
+                        val height = child?.measuredHeight
+                        if (height != null) {
+                            if (itemHeight!! > height || itemHeight!! == 0) {
+                                itemHeight = height
+                            }
+                            if (itemHeight!! < height) {
+                                itemExpendHeight = height
+                            }
+                        }
+                    }
                 }
-                if (itemHeight!! < height) {
-                    itemExpendHeight = height
+                if (myAdapter.hasSelect() && itemExpendHeight == 0) {
+                    for (i in 0 until myAdapter.count) {
+                        val child = my_devices.getChildAt(i)
+                        val height = child?.measuredHeight
+                        if (height != null && itemHeight!! < height) {
+                            itemExpendHeight = height
+                        }
+                    }
                 }
-                DebugLog.i("height:$height,itemHeight:$itemHeight,itemExpendHeight$itemExpendHeight")
+                DebugLog.i("itemHeight:$itemHeight,itemExpendHeight$itemExpendHeight")
                 lp.height = itemHeight!! * Math.min(myAdapter.count, 3)
                 my_devices.layoutParams = lp
             }
@@ -201,7 +216,7 @@ class BTFragment : BaseFragment() {
                         scan.text = getString(R.string.scanner_action_stop_scanning)
                         myAdapter.clearOnLineState()
                         availableAdapter.clearDevices()
-                        if(activity != null) {
+                        if (activity != null) {
                             (activity as BaseActivity).showLoadingDialog(R.string.refreshing)
                         }
                         scanControler.setIsScanning(true)
@@ -341,22 +356,74 @@ class BTFragment : BaseFragment() {
         }
         renameDialog!!.show()
     }
-    private fun showPasswordConfirm(deviceBond: DeviceBond?) {
-        if (passwordDialog == null) {
-            passwordDialog = Dialog(activity!!, R.style.DialogTheme)
-            passwordDialog!!.setCanceledOnTouchOutside(true)
-            val view = LayoutInflater.from(activity).inflate(R.layout.dialog_remove, null)
-            passwordDialog!!.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-            view.findViewById<TextView>(R.id.dialog_cancel).setOnClickListener { passwordDialog!!.dismiss() }
-            view.findViewById<TextView>(R.id.dialog_sure).text = getString(R.string.reset)
-            passwordDialog!!.setContentView(view, ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT))
+//    private fun showPasswordConfirm(deviceBond: DeviceBond) {
+//        if (passwordDialog == null) {
+//            passwordDialog = Dialog(activity!!, R.style.DialogTheme)
+//            passwordDialog!!.setCanceledOnTouchOutside(true)
+//            val view = LayoutInflater.from(activity).inflate(R.layout.dialog_password_confirm, null)
+//            passwordDialog!!.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+//            view.findViewById<TextView>(R.id.dialog_cancel).setOnClickListener { passwordDialog!!.dismiss() }
+//            passwordDialog!!.setContentView(view, ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT))
+//        }
+//        passwordDialog!!.findViewById<TextView>(R.id.dialog_sure).setOnClickListener {
+//            showPasswordView(deviceBond)
+//            passwordDialog!!.dismiss()
+//        }
+//        val editText = passwordDialog!!.findViewById<EditText>(R.id.rename_edit)
+//        editText.setText(deviceBond.psw)
+//        editText.setSelection(4)
+//        editText.requestFocus()
+//        passwordDialog!!.findViewById<TextView>(R.id.save_password).setOnClickListener {
+//            val password = editText.text
+//            if (!TextUtils.isEmpty(password) && password.length == 4) {
+//                deviceBond.psw = password.toString()
+//                DBManager.getInstance().deviceBondDao.update(deviceBond)
+//                passwordDialog!!.dismiss()
+//                val imm = activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+//                imm.hideSoftInputFromWindow(editText.windowToken, 0)
+//            } else {
+//                Toast.makeText(activity, R.string.password_rule_alert, Toast.LENGTH_SHORT).show()
+//            }
+//        }
+//        passwordDialog!!.show()
+//        editText.post {
+//            val imm = activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+//            imm.showSoftInput(editText,InputMethodManager.SHOW_IMPLICIT)
+//        }
+//    }
+
+    private fun showPasswordConfirm(deviceBond: DeviceBond) {
+        val passwordDialog = com.reb.switchbt.ui.PayPassDialog(activity!!, com.lzj.pass.dialog.R.style.dialog_pay_theme)
+        passwordDialog.setAlertDialog(true)
+                .setWindowSize(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT, 0.5f)
+                .setOutColse(true)
+                .setGravity(com.lzj.pass.dialog.R.style.dialogOpenAnimation, Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL)
+        passwordDialog.payViewPass.setPass(deviceBond.psw)
+        val saveBtn = passwordDialog.payViewPass.findViewById<Button>(R.id.save_password)
+        saveBtn.setOnClickListener {
+            val password = passwordDialog.payViewPass.strPass
+            if (!TextUtils.isEmpty(password) && password.length == 4) {
+                deviceBond.psw = password.toString()
+                DBManager.getInstance().deviceBondDao.update(deviceBond)
+                connectManager.write(deviceBond, BTCMD.queryCmd(deviceBond.psw.toInt()))
+                passwordDialog.dismiss()
+            } else {
+                Toast.makeText(activity, R.string.password_rule_alert, Toast.LENGTH_SHORT).show()
+            }
         }
-        passwordDialog!!.findViewById<TextView>(R.id.rename_title).text = getString(R.string.cur_password, deviceBond!!.psw)
-        passwordDialog!!.findViewById<TextView>(R.id.dialog_sure).setOnClickListener {
+        passwordDialog.payViewPass.findViewById<TextView>(R.id.dialog_sure).setOnClickListener {
             showPasswordView(deviceBond)
-            passwordDialog!!.dismiss()
+            passwordDialog.dismiss()
         }
-        passwordDialog!!.show()
+        passwordDialog.payViewPass.findViewById<TextView>(R.id.dialog_cancel).setOnClickListener { passwordDialog!!.dismiss() }
+        passwordDialog.payViewPass.setPayClickListener(object : com.reb.switchbt.ui.PayPassView.OnPayClickListener {
+            override fun onPassFinish(passContent: String) {
+            }
+
+            override fun onPayClose() {
+                passwordDialog.dismiss()
+            }
+        })
     }
 
     private fun showPasswordView(deviceBond: DeviceBond) {
@@ -383,13 +450,12 @@ class BTFragment : BaseFragment() {
     }
 
 
-
     private val btStateReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             val action = intent?.action
             if (BluetoothAdapter.ACTION_STATE_CHANGED == action) {
                 val state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.STATE_OFF)
-                if (BluetoothAdapter.STATE_ON == state){
+                if (BluetoothAdapter.STATE_ON == state) {
                     startScan()
                 }
             }

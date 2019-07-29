@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">SwitchBT</string>
+    <string name="app_name">DSD TECH SWITCH</string>
     <string name="device">Devices</string>
     <string name="about">About</string>
     <string name="settings">Settings</string>
-    <string name="appName">SwitchBT</string>
+    <string name="appName">DSD TECH SWITCH</string>
 
     <string name="connecting_alert">Bluetooth is connecting,Please wait.</string>
     <string name="connect_alert">Bluetooth connect success.</string>
@@ -47,7 +47,7 @@
     <string name="serviceUUID">serviceUUID:</string>
     <string name="writeUUID">writeUUID:</string>
     <string name="notifyUUID">notifyUUID:</string>
-    <string name="save">save</string>
+    <string name="save">SAVE</string>
 
     <string name="copyright" translatable="false">CopyRight©2015All Rights Reserved\nwww.sihaicorp.com\n深圳市四海盛电科技有限公司
     </string>
@@ -101,7 +101,7 @@
     <string name="cancel">Cancel</string>
     <string name="exit_beacon_alert">This operate will cause exit the Set mode.Do you mean it?</string>
     <string name="sure">Sure</string>
-    <string name="my_devices">My devices</string>
+    <string name="my_devices">My Devices</string>
     <string name="available_devices">Available Devices</string>
     <string name="pair">Pair</string>
     <string name="wait_moment">Please wait a moment!</string>
@@ -113,10 +113,12 @@
     <string name="off">OFF</string>
     <string name="on">ON</string>
     <string name="operation_failed">Operation failed</string>
-    <string name="cur_password">Current password\n%s</string>
-    <string name="reset">Reset</string>
+    <string name="cur_password">Current Password</string>
+    <string name="reset">Change Password</string>
     <string name="refreshing">Refreshing</string>
     <string name="Wrong_Password">Wrong Password!</string>
     <string name="add_my_devices">Add To My Devices</string>
-
+    <string name="Save">Save</string>
+    <string name="password_rule_alert">Please set a 4-digit password \n for the device</string>
+    <string name="no_device">There is no my device.  please pair and add to my device</string>
 </resources>

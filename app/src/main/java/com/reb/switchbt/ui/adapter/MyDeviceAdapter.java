@@ -1,6 +1,9 @@
 package com.reb.switchbt.ui.adapter;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.text.TextUtils;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,10 +32,18 @@ public class MyDeviceAdapter extends BaseAdapter {
     private Context mContext;
     private ConnectDeviceListener mListener;
     private ScanController scanControler;
+    private Drawable errorDrawable, linkDrawable, unlinkDrawable;
 
     public MyDeviceAdapter(Context context, ScanController scanControler) {
         this.mContext = context;
         this.scanControler = scanControler;
+        int size = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20, context.getResources().getDisplayMetrics());
+        errorDrawable = context.getResources().getDrawable(R.drawable.link_error);
+        linkDrawable = context.getResources().getDrawable(R.drawable.link);
+        unlinkDrawable = context.getResources().getDrawable(R.drawable.unlink);
+        errorDrawable.setBounds(0, 0, size ,size);
+        linkDrawable.setBounds(0, 0, size ,size);
+        unlinkDrawable.setBounds(0, 0, size ,size);
     }
 
     public void setDevices(List<DeviceBond> devices) {
@@ -126,7 +137,6 @@ public class MyDeviceAdapter extends BaseAdapter {
         }
         final DeviceBond device = devices.get(i);
         vh.mNameView.setText(device.getDisplay_name());
-        vh.mAddressView.setText(device.getMsg());
         View.OnClickListener relaySwitch = new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -134,13 +144,13 @@ public class MyDeviceAdapter extends BaseAdapter {
                     int index = 1;
                     switch (v.getId()) {
                         case R.id.relay1_switch:
-                            index = 1;
-                            break;
-                        case R.id.relay2_switch:
                             index = 2;
                             break;
-                        case R.id.relay3_switch:
+                        case R.id.relay2_switch:
                             index = 3;
+                            break;
+                        case R.id.relay3_switch:
+                            index = 4;
                             break;
                     }
                     mListener.switchRelay(device, index, ((Switch)v).isChecked());
@@ -151,17 +161,19 @@ public class MyDeviceAdapter extends BaseAdapter {
         vh.relay2Switch.setOnClickListener(relaySwitch);
         vh.relay3Switch.setOnClickListener(relaySwitch);
         if (!scanControler.isScanning()) {
-            vh.mConnectBtn.setEnabled(device.isOnline && !device.isConnectting);
+//            vh.mConnectBtn.setEnabled(device.isOnline && !device.isConnectting);
+            vh.mConnectBtn.setEnabled(device.isConnected);
             vh.relay1Switch.setEnabled(device.isConnected);
             vh.relay2Switch.setEnabled(device.isConnected);
             vh.relay3Switch.setEnabled(device.isConnected);
         }
-        vh.mConnectBtn.setChecked(device.isConnected || device.isConnectting);
+//        vh.mConnectBtn.setChecked(device.isConnected || device.isConnectting);
         vh.mConnectBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mListener != null) {
-                    mListener.connectDevice(device, ((Switch)v).isChecked());
+                    mListener.switchRelay(device, 1, ((Switch)v).isChecked());
+//                    mListener.connectDevice(device, ((Switch)v).isChecked());
                 }
             }
         });
@@ -170,20 +182,40 @@ public class MyDeviceAdapter extends BaseAdapter {
         vh.relay2.setVisibility(visibility);
         vh.relay3.setVisibility(visibility);
         if (device.isConnected) {
-            vh.relay1Switch.setChecked(device.relayState[0]);
-            vh.relay2Switch.setChecked(device.relayState[1]);
-            vh.relay3Switch.setChecked(device.relayState[2]);
+            vh.mConnectBtn.setChecked(device.relayState[0]);
+            vh.relay1Switch.setChecked(device.relayState[1]);
+            vh.relay2Switch.setChecked(device.relayState[2]);
+            vh.relay3Switch.setChecked(device.relayState[3]);
+            device.isOnline = true;
         } else {
-            vh.relay1Switch.setChecked(device.relayState[0]);
-            vh.relay2Switch.setChecked(device.relayState[1]);
-            vh.relay3Switch.setChecked(device.relayState[2]);
+            vh.relay1Switch.setChecked(false);
+            vh.mConnectBtn.setChecked(false);
+            vh.relay2Switch.setChecked(false);
+            vh.relay3Switch.setChecked(false);
         }
+//        vh.mAddressView.setText(device.getMsg());
+        Drawable d;
+        String msg;
+        if (device.isConnected) {
+            if (device.isWrong) {
+                msg = "Wrong Password!";
+                d = errorDrawable;
+            } else {
+                msg = "OnLine";
+                d = linkDrawable;
+            }
+        } else {
+            msg = "OFFLine";
+            d = unlinkDrawable;
+        }
+        vh.mAddressView.setCompoundDrawables(d, null, null, null);
+        vh.mAddressView.setText(msg);
         switch (device.relayCount) {
-            case 1:
+            case 2:
                 vh.relay2.setVisibility(View.GONE);
                 vh.relay3.setVisibility(View.GONE);
                 break;
-            case 2:
+            case 3:
                 vh.relay3.setVisibility(View.GONE);
                 break;
         }
@@ -232,7 +264,8 @@ public class MyDeviceAdapter extends BaseAdapter {
             for (DeviceBond device: devices) {
                 device.isSelect = false;
             }
-            if (deviceBond.isConnected) {
+            hasSelect = false;
+            if (deviceBond.isConnected && deviceBond.relayCount > 1) {
                 deviceBond.isSelect = true;
                 hasSelect = true;
             }
