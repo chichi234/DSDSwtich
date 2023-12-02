@@ -9,6 +9,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Build
@@ -37,6 +38,11 @@ import com.reb.switchbt.util.DebugLog
 import kotlinx.android.synthetic.main.frag_devices.*
 import java.text.SimpleDateFormat
 import java.util.*
+import android.support.v4.app.ActivityCompat.requestPermissions
+
+import android.support.v4.app.ActivityCompat.startActivityForResult
+import android.support.v4.content.ContextCompat.checkSelfPermission
+import android.util.Log
 
 
 /**
@@ -52,6 +58,8 @@ import java.util.*
 class BTFragment : BaseFragment() {
 
     private val sdf = SimpleDateFormat("yyyyMMDDHHmmss")
+    private val REQUEST_ENABLE_BT = 2
+    private val REQUEST_PERMISSION_BT = 3;
     private lateinit var myAdapter: MyDeviceAdapter
     private lateinit var availableAdapter: DeviceAdapter
     private var currentOperateDevice: DeviceBond? = null
@@ -210,8 +218,10 @@ class BTFragment : BaseFragment() {
                         .setScanTimeOut(5000)              // 扫描超时时间，可选，默认10秒；小于等于0表示不限制扫描时间
                         .build()
                 BleManager.getInstance().initScanRule(scanRuleConfig)
+//                BluetoothAdapter.getDefaultAdapter().startLeScan()
                 BleManager.getInstance().scan(object : BleScanCallback() {
                     override fun onScanStarted(success: Boolean) {
+                        Log.i("SSS", "onScanStarted:" + success)
                         // 开始扫描的回调
                         scan.text = getString(R.string.scanner_action_stop_scanning)
                         myAdapter.clearOnLineState()
@@ -223,6 +233,7 @@ class BTFragment : BaseFragment() {
                     }
 
                     override fun onScanning(bleDevice: BleDevice) {
+                        Log.i("SSS", "scan one device:" + bleDevice.mac)
                         // 扫描到一个之前没有扫到过的设备的回调
                         if (!myAdapter.refreshOnLineState(bleDevice)) {
                             availableAdapter.addOrUpdateDevice(bleDevice)
@@ -238,7 +249,8 @@ class BTFragment : BaseFragment() {
                     }
                 })
             } else {
-                BleManager.getInstance().enableBluetooth()
+                val enableIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+                startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
             }
         }
     }
@@ -251,22 +263,35 @@ class BTFragment : BaseFragment() {
     }
 
     private fun checkPermission(): Boolean {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            if (activity!!.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_DENIED) {
-                requestPermissions(arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION), 1)
-                false
-            } else {
-                true
-            }
-        } else {
-            true
+        var permission_connected = true
+        var permission_scan = true
+        var permission_location = true
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            permission_connected =
+                activity!!.checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) == PERMISSION_GRANTED
+            permission_scan =
+                activity!!.checkSelfPermission(Manifest.permission.BLUETOOTH_SCAN) == PERMISSION_GRANTED
+            if(!permission_connected || !permission_scan)
+                requestPermissions(arrayOf(Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT), REQUEST_PERMISSION_BT)
         }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            permission_location = activity!!.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+            if(!permission_location)
+                requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
+        }
+        return permission_connected && permission_scan &&  permission_location
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == 1) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            if (grantResults[0] == PERMISSION_GRANTED) {
+                startScan()
+            } else {
+                Toast.makeText(activity, "PERMISSION WERE DENIED, SCAN WILL NOT WORK", Toast.LENGTH_SHORT).show()
+            }
+        } else if(requestCode == REQUEST_PERMISSION_BT){
+            if (grantResults[0] == PERMISSION_GRANTED && grantResults[1] == PERMISSION_GRANTED) {
                 startScan()
             } else {
                 Toast.makeText(activity, "PERMISSION WERE DENIED, SCAN WILL NOT WORK", Toast.LENGTH_SHORT).show()
